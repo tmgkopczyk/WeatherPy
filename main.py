@@ -2,6 +2,16 @@
 import requests
 import xmltodict
 from csv import DictReader
+from dataclasses import dataclass
+
+@dataclass
+class WeatherStation:
+    code: str
+    name: str
+    province: str
+    longitude: float
+    latitude: float
+
 
 # get_site_by_name returns a Python dict containing the data of a weather station if site name and province code variables match a station in a list
 def get_site_by_name(site_name, province):
@@ -11,7 +21,7 @@ def get_site_by_name(site_name, province):
     for i in range(len(sites)):
         site = sites[i]
         # if the current site name and province code match what the user provided
-        if site["siteName"].strip().upper() == site_name.strip().upper() and site["province"].strip().upper() == province.strip().upper():
+        if site.name.strip().upper() == site_name.strip().upper() and site.province.strip().upper() == province.strip().upper():
             return site
         # if it doesn't
         else:
@@ -30,12 +40,13 @@ def parse_site_csv(csv_file):
         if site["Province Codes"] != "HEF":
             # then append the site's data to the list
             sites.append(
-                {
-                    "siteName":site["English Names"],
-                    "province":site["Province Codes"],
-                    "latitude":float(site["Latitude"][:-1]),
-                    "longitude":-1 * float(site["Latitude"][:-1])
-                }
+                WeatherStation(
+                    code = site["Codes"],
+                    name = site["English Names"],
+                    province = site["Province Codes"],
+                    longitude = -1 * float(site["Latitude"][:-1]),
+                    latitude= float(site["Latitude"][:-1])
+                )
             )
         # otherwise
         else:
@@ -43,3 +54,6 @@ def parse_site_csv(csv_file):
             continue
     # return the list
     return sites
+
+site = get_site_by_name("Ottawa (Richmond - Metcalfe)","ON")
+print(site)
