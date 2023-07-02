@@ -1,16 +1,28 @@
-# This is a sample Python script.
+# importing modules for use
+import requests
+import xmltodict
+from csv import DictReader
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# parse_site_csv takes a CSV file and converts into a Python list
+def parse_site_csv(csv_file):
+    sites = []
+    sites_reader = DictReader(csv_file.splitlines()[1:])
+    # for each site in the CSV file
+    for site in sites_reader:
+        # if the site's province code is not HEF
+        if site["Province Codes"] != "HEF":
+            # then append the site's data to the list
+            sites.append(
+                {
+                    "siteName":site["English Names"],
+                    "province":site["Province Codes"],
+                    "latitude":float(site["Latitude"][:-1]),
+                    "longitude":-1 * float(site["Latitude"][:-1])
+                }
+            )
+        # otherwise
+        else:
+            # continue
+            continue
+    # return the list
+    return sites
