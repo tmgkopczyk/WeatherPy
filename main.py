@@ -12,6 +12,15 @@ class WeatherStation:
     longitude: float
     latitude: float
 
+# get_site_url returns a URL that hosts the XML data of a site
+def get_site_url(site_name,province):
+    # return a Python dict for the site name and province provided
+    site = get_site_by_name(site_name,province)
+    # construct a URL from the site data retrieved
+    url = build_site_url(site.code,site.province)
+    return url
+
+
 
 # get_site_by_name returns a Python dict containing the data of a weather station if site name and province code variables match a station in a list
 def get_site_by_name(site_name, province):
@@ -28,7 +37,7 @@ def get_site_by_name(site_name, province):
             continue
     # otherwise, return an error message
     else:
-        return "No site with this name found."
+        raise ValueError("The values provided do not match a specific site in the list. Are you sure you spelled them correctly?")
 
 # parse_site_csv takes a CSV file and converts into a Python list
 def parse_site_csv(csv_file):
@@ -41,11 +50,11 @@ def parse_site_csv(csv_file):
             # then append the site's data to the list
             sites.append(
                 WeatherStation(
-                    code = site["Codes"],
-                    name = site["English Names"],
-                    province = site["Province Codes"],
-                    longitude = -1 * float(site["Latitude"][:-1]),
-                    latitude= float(site["Latitude"][:-1])
+                    code=site["Codes"],
+                    name=site["English Names"],
+                    province=site["Province Codes"],
+                    longitude=-1 * float(site["Latitude"][:-1]),
+                    latitude=float(site["Latitude"][:-1])
                 )
             )
         # otherwise
@@ -55,5 +64,5 @@ def parse_site_csv(csv_file):
     # return the list
     return sites
 
-site = get_site_by_name("Ottawa (Richmond - Metcalfe)","ON")
+site = get_site_by_name("Ottawa (Kanata - Orleans)","ON")
 print(site)
