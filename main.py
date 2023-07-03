@@ -20,7 +20,9 @@ def get_site_url(site_name,province):
     url = build_site_url(site.code,site.province)
     return url
 
-
+# build_site_url builds the URL of the XML data of a weather station from the user provided site code and province
+def build_site_url(site_code,province):
+    return f"http://dd.weather.gc.ca/citypage_weather/xml/{province}/{site_code}_e.xml"
 
 # get_site_by_name returns a Python dict containing the data of a weather station if site name and province code variables match a station in a list
 def get_site_by_name(site_name, province):
