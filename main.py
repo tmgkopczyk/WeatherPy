@@ -12,6 +12,13 @@ class WeatherStation:
     longitude: float
     latitude: float
 
+# get_weather_by_site_name returns weather data for the site specified
+def get_weather_by_site_name(site_name, province):
+    # get the url of the site
+    url = get_site_url(site_name,province)
+    # return the data from the url
+    return url
+
 # get_site_url returns a URL that hosts the XML data of a site
 def get_site_url(site_name,province):
     # return a Python dict for the site name and province provided
