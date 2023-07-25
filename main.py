@@ -1,5 +1,7 @@
 # importing modules for use
 from dataclasses import dataclass
+
+import requests
 from requests import get
 
 @dataclass
@@ -42,3 +44,11 @@ def get_site_by_name(site_name: str, province: str):
     # if the requested site cannot be found, raise an error message
     else:
         raise ValueError("No site with this name found. Please check to see if you spelled it correctly, or are requesting data for the proper site.")
+
+# get_weather returns the XML data located at the provided URL as a Python dict
+def get_weather(url):
+    # make a GET request to retrieve the XML data from the provided URL
+    body = get(url).content
+    # convert the XML file into a Python dict
+    return parse_weather_xml(body)
+
