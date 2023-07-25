@@ -16,3 +16,9 @@ def get_weather_by_site_name(site_name: str, province: str):
     # return the XML data of the weather station using the URL provided as a Python dict
     return get_weather(url)
 
+# get weather_by_site_code returns the data of a weather station from the site code that the user provides
+def get_weather_by_site_code(site_code: str, province: str):
+    # build the weather station URL using the provided variables
+    url = build_site_url(site_code,province)
+    # return the XML data of the weather station using the URL provided as a Python dict
+    return get_weather(url)
