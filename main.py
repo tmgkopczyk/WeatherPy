@@ -1,13 +1,12 @@
 # importing modules for use
 from dataclasses import dataclass
-
-import requests
+from csv import DictReader
 from requests import get
 
 @dataclass
 class WeatherStation:
     code: str
-    name: str
+    siteName: str
     province: str
     longitude: float
     latitude: float
@@ -32,19 +31,15 @@ def get_site_by_name(site_name: str, province: str):
     body = get("https://dd.weather.gc.ca/citypage_weather/docs/site_list_en.csv")
     # parse the CSV file into a Python list
     sites = parse_site_csv(body.text)
-    # for each site in the file
+    # for each site in the list
     for i in range(len(sites)):
         site = sites[i]
-        # if the current site's name and province code match the provided variables, then return the file
+        # if the site name and province code match what is provided
         if site.siteName.strip().upper() == site_name.strip().upper() and site.province.strip().upper() == province.strip().upper():
             return site
-        # otherwise, continue
         else:
             continue
-    # if the requested site cannot be found, raise an error message
-    else:
-        raise ValueError("No site with this name found. Please check to see if you spelled it correctly, or are requesting data for the proper site.")
-
+    raise ValueError()
 # get_weather returns the XML data located at the provided URL as a Python dict
 def get_weather(url: str):
     # make a GET request to retrieve the XML data from the provided URL
@@ -64,3 +59,27 @@ def get_site_url(site_name: str, province: str):
 # build_site_url returns the URL of the hosted XML data of the site using the provided site code and province
 def build_site_url(site_code: str, province: str):
     return f"http://dd.weather.gc.ca/citypage_weather/xml/{province}/{site_code}_e.xml"
+
+# parse_site_csv returns a Python list containing dataclasses for each weather station
+def parse_site_csv(csv_file):
+    # convert the CSV file into a Python-readable format
+    sites_reader = DictReader(csv_file.splitlines()[1:])
+    sites = []
+    # for each site in the CSV file
+    for site in sites_reader:
+        # if the province code is not HEF
+        if site["Province Codes"] != "HEF":
+            # append the data of the weather station as a dataclass
+            sites.append(
+                WeatherStation(
+                    code = site["Codes"],
+                    siteName= site["English Names"],
+                    province= site["Province Codes"],
+                    longitude = float(site["Latitude"][:-1]),
+                    latitude = -1 * float(site["Longitude"][:-1])
+                )
+            )
+        # otherwise, continue
+        else:
+            continue
+    return sites
