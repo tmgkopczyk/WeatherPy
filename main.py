@@ -46,9 +46,18 @@ def get_site_by_name(site_name: str, province: str):
         raise ValueError("No site with this name found. Please check to see if you spelled it correctly, or are requesting data for the proper site.")
 
 # get_weather returns the XML data located at the provided URL as a Python dict
-def get_weather(url):
+def get_weather(url: str):
     # make a GET request to retrieve the XML data from the provided URL
     body = get(url).content
     # convert the XML file into a Python dict
     return parse_weather_xml(body)
+
+# get_site_url builds and returns the URL of the page that hosts the requested XML data
+def get_site_url(site_name: str, province: str):
+    # get the dataclass corresponding to the site name and province provided
+    site = get_site_by_name(site_name,province)
+    # build the URL for the hosted XML data of the station
+    url = build_site_url(site.code,site.province)
+    # return the url
+    return url
 
