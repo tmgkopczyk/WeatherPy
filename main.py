@@ -61,3 +61,6 @@ def get_site_url(site_name: str, province: str):
     # return the url
     return url
 
+# build_site_url returns the URL of the hosted XML data of the site using the provided site code and province
+def build_site_url(site_code: str, province: str):
+    return f"http://dd.weather.gc.ca/citypage_weather/xml/{province}/{site_code}_e.xml"
