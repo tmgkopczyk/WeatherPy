@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from csv import DictReader
 from requests import get
+from xmltodict import parse
 
 @dataclass
 class WeatherStation:
@@ -39,7 +40,6 @@ def get_site_by_name(site_name: str, province: str):
             return site
         else:
             continue
-    raise ValueError()
 # get_weather returns the XML data located at the provided URL as a Python dict
 def get_weather(url: str):
     # make a GET request to retrieve the XML data from the provided URL
@@ -52,7 +52,7 @@ def get_site_url(site_name: str, province: str):
     # get the dataclass corresponding to the site name and province provided
     site = get_site_by_name(site_name,province)
     # build the URL for the hosted XML data of the station
-    url = build_site_url(site.code,site.province)
+    url = build_site_url(site.code, site.province)
     # return the url
     return url
 
@@ -70,16 +70,21 @@ def parse_site_csv(csv_file):
         # if the province code is not HEF
         if site["Province Codes"] != "HEF":
             # append the data of the weather station as a dataclass
-            sites.append(
-                WeatherStation(
-                    code = site["Codes"],
-                    siteName= site["English Names"],
-                    province= site["Province Codes"],
-                    longitude = float(site["Latitude"][:-1]),
-                    latitude = -1 * float(site["Longitude"][:-1])
-                )
-            )
+            sites.append(WeatherStation(
+                code=site["Codes"],
+                siteName = site["English Names"],
+                province = site["Province Codes"],
+                longitude = -1 * float(site["Longitude"][:-1]),
+                latitude = float(site["Latitude"][:-1])
+            ))
         # otherwise, continue
         else:
             continue
     return sites
+
+def parse_weather_xml(xml):
+    weather_root = parse(xml)
+    return weather_root
+
+weather_data = get_weather_by_site_name("Ottawa (Richmond - Metcalfe)","ON")
+print(weather_data)
